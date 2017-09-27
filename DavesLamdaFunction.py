@@ -134,6 +134,10 @@ def get_color_from_session(intent, session):
         intent['name'], speech_output, reprompt_text, should_end_session))
 
 
+
+
+
+# --------------- Character Creation ------------------
 def create_character_class_attributes(character_class):
     return {"characterClass": character_class}
 
@@ -185,6 +189,63 @@ def get_character_from_session(intent, session):
         intent['name'], speech_output, reprompt_text, should_end_session))
 
 
+
+
+
+# --------------- Command Code ------------------
+def create_command_class_attributes(command_code):
+    return {"commandCode": command_code}
+
+
+def set_command_in_session(intent, session):
+
+    card_title = intent['name']
+    session_attributes = {}
+    should_end_session = False
+    reprompt_text = None
+
+    if 'Commands' in intent['slots']:
+        command_code = intent['slots']['Commands']['value']
+        session_attributes = create_command_class_attributes(command_code)
+
+        #execute command here
+
+        speech_output = "Command " + \
+                        character_class + \
+                        "accepted."
+    else:
+        speech_output = "I'm not sure what your command is."
+
+
+    return build_response(session_attributes, build_speechlet_response(
+        card_title, speech_output, reprompt_text, should_end_session))
+
+
+def get_command_from_session(intent, session):
+    session_attributes = {}
+    reprompt_text = None
+    should_end_session = False
+
+    if session.get('attributes', {}) and "commandCode" in session.get('attributes', {}):
+        character_class = session['attributes']['commandCode']
+        speech_output = "Your last command was " + character_class
+    else:
+        speech_output = "I'm not sure what your command was."
+
+    return build_response(session_attributes, build_speechlet_response(
+        intent['name'], speech_output, reprompt_text, should_end_session))
+
+
+
+
+
+
+
+
+
+
+
+
 # --------------- Events ------------------
 
 def on_session_started(session_started_request, session):
@@ -223,6 +284,10 @@ def on_intent(intent_request, session):
         return set_character_in_session(intent, session)
     elif intent_name == "WhatsMyCharacterIntent":
         return get_character_from_session(intent, session)
+    elif intent_name == "MyCommandIsIntent":
+        return set_command_in_session(intent, session)
+    elif intent_name == "PromptForCommandIntent":
+        return get_command_from_session(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":

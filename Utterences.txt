@@ -15,7 +15,7 @@ WhatsMyColorIntent yes
 WhatsMyColorIntent yup
 WhatsMyColorIntent sure
 WhatsMyColorIntent yes please
-MyCharacterIsIntent my character is {CharacterClass}
+MyCharacterIsIntent my character is {Character}
 WhatsMyCharacterIntent what's my character
 WhatsMyCharacterIntent what is my character
 MyDirectionIsIntent my direction is {Directions}
@@ -24,7 +24,7 @@ WhatsMyDirectionIntent what's my direction
 MyLocationIsIntent my location is {Locations}
 WhatsMyLocationIntent where am I
 WhatsMyLocationIntent what's my location
-MyCommandIsIntent command code {Command}
+MyCommandIsIntent command code {Commands}
 PromptForCommandIntent ready to enter command
 PromptForCommandIntent what do I do
 PromptForCommandIntent what now
