@@ -1,0 +1,68 @@
+{
+  "intents": [
+    {
+      "slots": [
+        {
+          "name": "Color",
+          "type": "LIST_OF_COLORS"
+        }
+      ],
+      "intent": "MyColorIsIntent"
+    },
+    {
+      "intent": "WhatsMyColorIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "Character",
+          "type": "LIST_OF_CHARACTER_CLASSES"
+        }
+      ],
+      "intent": "MyCharacterIsIntent"
+    },
+    {
+      "intent": "WhatsMyCharacterIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "Directions",
+          "type": "LIST_OF_DIRECTIONS"
+        }
+      ],
+      "intent": "MyDirectionIsIntent"
+    },
+    {
+      "intent": "WhatsMyDirectionIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "Locations",
+          "type": "LIST_OF_LOCATIONS"
+        }
+      ],
+      "intent": "MyLocationIsIntent"
+    },
+    {
+      "intent": "WhatsMyLocationIntent"
+    },
+    {
+      "slots": [
+        {
+          "name": "Commands",
+          "type": "LIST_OF_COMMANDS"
+        }
+      ],
+      "intent": "MyCommandIsIntent"
+    },
+    {
+      "intent": "PromptForCommandIntent"
+    },
+
+    {
+      "intent": "AMAZON.HelpIntent"
+    }
+  ]
+}
