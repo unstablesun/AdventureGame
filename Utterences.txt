@@ -1,31 +1,17 @@
-MyColorIsIntent my favorite color is {Color}
-WhatsMyColorIntent what's my favorite color
-WhatsMyColorIntent what is my favorite color
-WhatsMyColorIntent what's my color
-WhatsMyColorIntent what is my color
-WhatsMyColorIntent my color
-WhatsMyColorIntent my favorite color
-WhatsMyColorIntent get my color
-WhatsMyColorIntent get my favorite color
-WhatsMyColorIntent give me my favorite color
-WhatsMyColorIntent give me my color
-WhatsMyColorIntent what my color is
-WhatsMyColorIntent what my favorite color is
-WhatsMyColorIntent yes
-WhatsMyColorIntent yup
-WhatsMyColorIntent sure
-WhatsMyColorIntent yes please
-MyCharacterIsIntent my character is {Character}
-WhatsMyCharacterIntent what's my character
-WhatsMyCharacterIntent what is my character
-MyDirectionIsIntent my direction is {Directions}
-WhatsMyDirectionIntent what's my direction
-WhatsMyDirectionIntent what's my direction
-MyLocationIsIntent my location is {Locations}
-WhatsMyLocationIntent where am I
-WhatsMyLocationIntent what's my location
+MyObjectIsIntent use object {Objects}
+MyObjectIsIntent take object {Objects}
+WhatsMyToolIntent what object do I have
+WhatsMyToolIntent what am I holding
 MyCommandIsIntent command code {Commands}
-PromptForCommandIntent ready to enter command
+MyCommandIsIntent command {Commands}
+MyCommandIsIntent action {Commands}
+MyCommandIsIntent execute {Commands}
+PromptForCommandIntent ready and waiting
 PromptForCommandIntent what do I do
 PromptForCommandIntent what now
 PromptForCommandIntent what's happening
+PromptForCommandIntent what is happening
+PromptForStatusIntent status
+PromptForStatusIntent status update
+PromptForStatusIntent health
+PromptForStatusIntent health update

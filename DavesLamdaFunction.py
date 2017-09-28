@@ -1,22 +1,81 @@
 """
-This sample demonstrates a simple skill built with the Amazon Alexa Skills Kit.
-The Intent Schema, Custom Slots, and Sample Utterances for this skill, as well
-as testing instructions are located at http://amzn.to/1LzFrj6
-
-For additional samples, visit the Alexa Skills Kit Getting Started guide at
-http://amzn.to/1LGWsLG
+Dave's Adventure Game.  Try not to die
 """
 
 from __future__ import print_function
 
-# ----------------World data----------------
+# ----------------World data and logic----------------
 
 
-WorldLocations = [[10, 20], [30, 40, 50, 60, 70]]
+Location0 = {'id': 0, 'north': 'area1', 'west': 'blocked', 'south': 'blocked', 'east': 'blocked', 'description': 'you are in a clearing'}
+Location1 = {'id': 1, 'north': 'area2', 'west': 'area3', 'south': 'blocked', 'east': 'blocked', 'description': 'you are in a wooded area with spoungy turf'}
+Location2 = {'id': 2, 'north': 'area3', 'west': 'blocked', 'south': 'blocked', 'east': 'blocked', 'description': 'you are at the edge of a cliff over looking a river'}
+Location3 = {'id': 3, 'north': 'blocked', 'west': 'blocked', 'south': 'blocked', 'east': 'area1', 'description': 'you are at mouth of a cave blocked by dead bodies'}
 
-for value in WorldLocations:
-    # Print each row's length and its elements.
-    print(len(value), value)
+WorldLocations = {'area0':Location0,'area1':Location1,'area2':Location2,'area3':Location3}
+
+
+CurrentLocation = 'area0'
+ActionResponseText = 'none'
+
+
+def MoveFromLocation(direction):
+    global ActionResponseText
+    global CurrentLocation
+    curloc = WorldLocations[CurrentLocation]
+    direction_value = curloc[direction]
+    if direction_value == 'blocked':
+        ActionResponseText = "The way is blocked"
+    else:
+        CurrentLocation = direction_value
+        curloc = WorldLocations[CurrentLocation]
+        ActionResponseText = curloc['description']
+
+def WaitAtLocation():
+    global ActionResponseText
+    ActionResponseText = "You better do something"
+
+def DescribeLocation():
+    global ActionResponseText
+    curloc = WorldLocations[CurrentLocation]
+    ActionResponseText = curloc['description']
+
+#commands
+'''
+describe
+move north
+move west
+move south
+move east
+attack
+defend
+hide
+wait'''
+
+def ParseCommand(command):
+    if command == 'move north':
+        MoveFromLocation('north')
+    elif command== 'move west':
+        MoveFromLocation('west')
+    elif command== 'move south':
+        MoveFromLocation('south')
+    elif command== 'move east':
+        MoveFromLocation('east')
+    elif command== 'describe':
+        DescribeLocation()
+    elif command== 'wait':
+        WaitAtLocation()
+    elif command== 'attack':
+        WaitAtLocation()
+    elif command== 'defend':
+        WaitAtLocation()
+    elif command== 'hide':
+        WaitAtLocation()
+
+
+
+
+
 
 
 # --------------- Helpers that build all of the responses ----------------------
@@ -60,12 +119,10 @@ def get_welcome_response():
     session_attributes = {}
     card_title = "Welcome"
     speech_output = "Welcome to Dave's adventure game. " \
-                    "Please tell me your character class by saying, " \
-                    "my character class is warrior for example"
-    # If the user either does not reply to the welcome message or says something
-    # that is not understood, they will be prompted again with this text.
-    reprompt_text = "Please tell me your character class by saying, " \
-                    "my character class is witch for example"
+                    "You wakeup outside on a bed of wet grass. You're cold, naked and you're having a bad hair day.  As your vision clears you look around." \
+                    "Please enter a voice command, for example, command describe or action move north."
+
+    reprompt_text = "Please enter a voice command, for example, describe."
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -73,7 +130,7 @@ def get_welcome_response():
 
 def handle_session_end_request():
     card_title = "Session Ended"
-    speech_output = "Thank you for trying Dave's adventure game. " \
+    speech_output = "Thank you for playing Dave's adventure game." \
                     "Smell you later! "
     # Setting this to true ends the session and exits the skill.
     should_end_session = True
@@ -81,118 +138,12 @@ def handle_session_end_request():
         card_title, speech_output, None, should_end_session))
 
 
-def create_favorite_color_attributes(favorite_color):
-    return {"favoriteColor": favorite_color}
-
-
-def set_color_in_session(intent, session):
-    """ Sets the color in the session and prepares the speech to reply to the
-    user.
-    """
-
-    card_title = intent['name']
-    session_attributes = {}
-    should_end_session = False
-
-    if 'Color' in intent['slots']:
-        favorite_color = intent['slots']['Color']['value']
-        session_attributes = create_favorite_color_attributes(favorite_color)
-        speech_output = "I now know your favorite color is " + \
-                        favorite_color + \
-                        ". You can ask me your favorite color by saying, " \
-                        "what's my favorite color?"
-        reprompt_text = "You can ask me your favorite color by saying, " \
-                        "what's my favorite color?"
-    else:
-        speech_output = "I'm not sure what your favorite color is. " \
-                        "Please try again."
-        reprompt_text = "I'm not sure what your favorite color is. " \
-                        "You can tell me your favorite color by saying, " \
-                        "my favorite color is red."
-    return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
-
-
-def get_color_from_session(intent, session):
-    session_attributes = {}
-    reprompt_text = None
-
-    if session.get('attributes', {}) and "favoriteColor" in session.get('attributes', {}):
-        favorite_color = session['attributes']['favoriteColor']
-        speech_output = "Your favorite color is " + favorite_color + \
-                        ". Goodbye."
-        should_end_session = True
-    else:
-        speech_output = "I'm not sure what your favorite color is. " \
-                        "You can say, my favorite color is red."
-        should_end_session = False
-
-    # Setting reprompt_text to None signifies that we do not want to reprompt
-    # the user. If the user does not respond or says something that is not
-    # understood, the session will end.
-    return build_response(session_attributes, build_speechlet_response(
-        intent['name'], speech_output, reprompt_text, should_end_session))
 
 
 
-
-
-# --------------- Character Creation ------------------
-def create_character_class_attributes(character_class):
-    return {"characterClass": character_class}
-
-def set_character_in_session(intent, session):
-    """ Sets the character in the session and prepares the speech to reply to the
-    user.
-    """
-
-    card_title = intent['name']
-    session_attributes = {}
-    should_end_session = False
-
-    if 'Character' in intent['slots']:
-        character_class = intent['slots']['Character']['value']
-        session_attributes = create_character_class_attributes(character_class)
-        speech_output = "You are a " + \
-                        character_class + \
-                        "."
-        reprompt_text = "You can ask me what your character is by saying, " \
-                        "what's my character?"
-    else:
-        speech_output = "I'm not sure what your character is. " \
-                        "Maybe you're a clown?"
-        reprompt_text = "I'm not sure what your character is. " \
-                        "You can tell me what your character is by saying, " \
-                        "my character class is witch for example."
-    return build_response(session_attributes, build_speechlet_response(
-        card_title, speech_output, reprompt_text, should_end_session))
-
-
-def get_character_from_session(intent, session):
-    session_attributes = {}
-    reprompt_text = None
-
-    if session.get('attributes', {}) and "characterClass" in session.get('attributes', {}):
-        character_class = session['attributes']['characterClass']
-        speech_output = "Your character is " + character_class + \
-                        ". Enter voice command."
-        should_end_session = False
-    else:
-        speech_output = "I'm not sure what your character is. " \
-                        "You can say, my character class is witch for example."
-        should_end_session = False
-
-    # Setting reprompt_text to None signifies that we do not want to reprompt
-    # the user. If the user does not respond or says something that is not
-    # understood, the session will end.
-    return build_response(session_attributes, build_speechlet_response(
-        intent['name'], speech_output, reprompt_text, should_end_session))
-
-
-
-
-
+#------------------------------------------------------
 # --------------- Command Code ------------------
+#------------------------------------------------------
 def create_command_class_attributes(command_code):
     return {"commandCode": command_code}
 
@@ -202,20 +153,22 @@ def set_command_in_session(intent, session):
     card_title = intent['name']
     session_attributes = {}
     should_end_session = False
-    reprompt_text = None
 
     if 'Commands' in intent['slots']:
         command_code = intent['slots']['Commands']['value']
         session_attributes = create_command_class_attributes(command_code)
 
         #execute command here
+        ParseCommand(command_code)
+        #get command response, ex. the path is blocked, ex. you've arrived at a new area
 
-        speech_output = "Command " + \
-                        character_class + \
-                        "accepted."
+        speech_output = ActionResponseText
+        #speech_output = "Command " + command_code + "accepted."
+        reprompt_text = "Please say your next command."
+
     else:
-        speech_output = "I'm not sure what your command is."
-
+        speech_output = "Command not recognized. Please restate. For example, command describe."
+        reprompt_text = "Please say your next command."
 
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
@@ -236,6 +189,17 @@ def get_command_from_session(intent, session):
         intent['name'], speech_output, reprompt_text, should_end_session))
 
 
+def get_health_status(intent, session):
+    session_attributes = {}
+    reprompt_text = None
+    should_end_session = False
+
+    #get health status and update speech output
+
+    speech_output = "You are in good health"
+
+    return build_response(session_attributes, build_speechlet_response(
+        intent['name'], speech_output, reprompt_text, should_end_session))
 
 
 
@@ -276,24 +240,26 @@ def on_intent(intent_request, session):
     intent_name = intent_request['intent']['name']
 
     # Dispatch to your skill's intent handlers
-    if intent_name == "MyColorIsIntent":
-        return set_color_in_session(intent, session)
-    elif intent_name == "WhatsMyColorIntent":
-        return get_color_from_session(intent, session)
-    elif intent_name == "MyCharacterIsIntent":
-        return set_character_in_session(intent, session)
-    elif intent_name == "WhatsMyCharacterIntent":
-        return get_character_from_session(intent, session)
-    elif intent_name == "MyCommandIsIntent":
+    if intent_name == "MyCommandIsIntent":
         return set_command_in_session(intent, session)
     elif intent_name == "PromptForCommandIntent":
         return get_command_from_session(intent, session)
+    elif intent_name == "PromptForStatusIntent":
+        return get_health_status(intent, session)
+    elif intent_name == "PromptForStatusIntent":
+        return get_health_status(intent, session)
+    elif intent_name == "MyObjectIsIntent":
+        return get_health_status(intent, session)
+    elif intent_name == "WhatsMyObjectIntent":
+        return get_health_status(intent, session)
+    elif intent_name == "MyColorIsIntent":
+        return get_health_status(intent, session)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
     elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
         return handle_session_end_request()
     else:
-        raise ValueError("Invalid intent")
+        raise ValueError("Invalid intent " + intent_name)
 
 
 def on_session_ended(session_ended_request, session):
